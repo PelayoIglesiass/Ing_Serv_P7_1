@@ -8,6 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     private var euroToDollar: Double = 1.16
@@ -37,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "¡Me han pulsado!", Toast.LENGTH_SHORT).show()
         convert(editTextDollars, editTextEuros, 1 / euroToDollar)
     }
-
     private fun convert(source: EditText, destination: EditText, factor: Double) {
         val text = source.text.toString()
         val value = text.toDoubleOrNull()
@@ -46,5 +50,23 @@ class MainActivity : AppCompatActivity() {
             return
         }
         destination.setText((value * factor).toString())
+    }
+    
+    private fun fetchExchangeRate() {
+        val url = URL("https://api.frankfurter.app/latest?from=EUR&to=USD")
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        val inputStream = connection.inputStream
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        val response = StringBuilder()
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            response.append(line)
+        }
+        reader.close()
+        val jsonResponse = response.toString()
+        val jsonObject = JSONObject(jsonResponse)
+        val rates = jsonObject.getJSONObject("rates")
+        euroToDollar = rates.getDouble("USD")
     }
 }
