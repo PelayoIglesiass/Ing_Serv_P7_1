@@ -70,5 +70,12 @@
                 android:onClick="onClickToEuros"
                 android:text="@string/button_to_euros" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            tools:text="Cambio EUR→USD: 1.16" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
